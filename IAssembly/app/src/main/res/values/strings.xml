@@ -1,0 +1,185 @@
+<resources>
+    <string name="app_name">IAssembly</string>
+    <string name="action_about">About</string>
+    <string name="action_supported_ops">Supported Operations</string>
+    <string name="section_code_label">Code</string>
+    <string name="section_registers_label">Reg</string>
+    <string name="section_memory_label">Memory</string>
+    <string name="section_docs_label">Docs</string>
+
+    <string name="docs_title_notfound">Title Not Found</string>
+    <string name="docs_content_notfound">Content Fot Found</string>
+
+    <!-- DOCS -->
+
+    <string name="docs_title_lessonOne">Intro To Programming</string>
+    <string name="docs_content_lessonOne">A program is nothing more than a bunch of instructions
+        bundled up for the computer to execute. Imagine such instructions as a recipe to bake a delicious cake.
+        If the instructions successfully produce a cake, then it is not a lie. You as the programmer write these
+        instructions to produce a certain output or result. In this analogy, it means the desired cake of utmost
+        deliciousness.You may be familiar with Microsoft Word or Firefox. The creators of these programs wrote a
+        lot of instructions to make the programs work and otherwise function how you have seen them operate.
+        Programming is simply writing these instructions. A developer writes in what is called a programming language.
+        Just like how we communicate with different countries that have different languages such as English and Spanish,
+        a developer “speaks” to a computer using a programming language. The developer writes out instructions for the
+        computer to follow and execute.</string>
+
+    <string name="docs_title_lessonTwo">What is Assembly?</string>
+    <string name="docs_content_lessonTwo">
+        To understand what assembly is, we first need to understand what a processor is.
+        The processor, commonly referred to as a Central Processing Unit (CPU), is a piece of hardware that executes
+        simple instructions that tell the computer to do something. These instructions consist of adding, subtracting,
+        multiplying numbers and much more. These simple instructions are combined to create complex programs.
+        \n\n
+        <b>Now Process This!</b>
+        \n\n
+        The processor contains a list of instructions that do such operations. These are known as Operation Codes; or, \‘opcodes\’
+        for short. The only thing a processor understands are numbers - so because of this, each instruction is represented
+        by a number. Back before assembly, developers had to write programs with numbers. One could imagine that writing
+        even small programs using just numbers would suck pretty bad. This is almost the equivalent of seeing a cake recipe
+        that looks like this:
+        \n
+        <i>1. 0010 0001 0111</i>
+        \n
+        <i>2. 0001 1111 1100</i>
+        \n
+        To remedy this, a smart group of people came up with the idea of a mnemonic. A mnemonic is a human readable form
+        of a corresponding instruction. We will revisit this particular topic soon after exploring what these numbers
+        are and how they work.
+        \n\n
+        <b>Assembly is…</b>
+        \n\n
+        To get back to the original question - if we put all these pieces together, we can formulate an answer.
+        We know that assembly is not the instructions themselves, nor is it something very high level like the
+        Java programming language.  Assembly is a layer that sits on top of the underlying opcodes and the CPU.
+        Assembly is used in modern development so, seemingly, confusing and ambiguous numbers aren\'t used to
+        write software (refer to the previous nightmare cake recipe). Assembly is thought of to be very
+        difficult to comprehend on even a basic level. While more sophisticated and advanced assembly can
+        take years to understand or write; advanced concepts of pretty much anything can take years to understand.
+        The purpose of this tutorial is to emphasize how simple basic assembly can be, and understand on a basic
+        level how a computer works. You shouldn\'t be afraid of assembly or feel intimidated by it. If you already
+        know a programming language, or you are using this as an intro to programming, it will help to understand
+        how the low level operations of a computer work. These principles can help create more efficient software
+        and design. And besides, assembly code looks pretty cool!
+        </string>
+
+    <string name="lesson_exercise_text_0">In this lesson we explored the basic concepts of programming. I don\'t
+    expect you to be able to program right now. For this task I want you to get acquainted with the editor.
+    Press the \"Execute\" button to run the program. Notice that the bottom right of the screen displays
+    the output of the program. Press the \"Step\" button to execute the program one line at a time. Press \"Check\"
+    to check your work for correctness. Finally, press \"Exit\" to exit Tutorial mode.</string>
+
+    <string untranslatable ="true" name="lesson_exercise_precode_0">
+        section .text ; Define text section\n
+        mov eax,1     ; sys_exit\n
+        mov ebx,0     ; Return value\n
+        int 80h       ; Call kernel\n
+    </string>
+
+
+    <string name="lesson_exercise_text_1">Press \'Execute\' to run the program. Press \'Check\' afterwards. Here
+     is a program that actually does something. One of the first things you do in any programming language at
+        the start is to make a program that outputs the string \"Hello World\". It seems trivial at first,
+        but it is a good introduction to the bare basics of any language. For us, it means how to declare
+        basic data that the program can use. The .data section declares an area where useful data for your
+    program is stored. The .text section is the actual instructions that get executed. First, we declare
+    our string. \"msg\" is the name of this particular set of data. \"db\" means define the data as a
+    series of bytes. There is another section for declaring data, but we will go over that later. That
+    other section is known as the BSS section. As a quick recap, a byte is a collection of 8 bits. This
+    means that for each byte we have 256 values to play with!</string>
+    <string untranslatable ="true" name="lesson_exercise_precode_1">
+        section .data\n
+        msg: db \"Hello, World!\",0xa\n
+        len: equ $-msg ; Length of msg.\n
+        \n
+        section .text \n
+        mov eax,4 ; sys_write identifier\n
+        mov ebx,1 ; file descriptor \n
+        mov ecx,msg ; pointer to msg\n
+        mov edx,len ; length of msg\n
+
+        int 80h ; Hand control to kernel\n
+
+        mov eax,1     ; sys_exit\n
+        mov ebx,0     ; Return value\n
+        int 80h       ; Call kernel\n
+    </string>
+
+    <string untranslatable ="true" name="lesson_exercise_precode_2">
+        section .data\n
+        \n;Write your code here!
+        \n
+        xor eax,eax
+    </string>
+
+    <string name="lesson_exercise_text_notfound">Lesson text not found.</string>
+
+    <string name="lesson_success">Congratulations!</string>
+    <string name="success_dialog_question">You completed this lesson! Would you like to exit the Tutorial editor now?</string>
+    <string name="memory_address_label">Address</string>
+    <string name="memory_value_label">Value</string>
+    <string name="about_headline">iAssembly by Anthony M. Santiago</string>
+    <string name="about_desc">iAssembly is an x86 simulator using NASM as a base for syntax. I believe it
+        is beneficial to know how low level operations work on a basic level. This app aims
+    to guide beginners or even experienced programmers in learning the basics.</string>
+    <string name="about_feedback">Feedback or Suggestions? Email me at: syncedsoftware@gmail.com</string>
+    <string untranslatable ="true" name="supported_keywords_list">resb, resw, resq, resq, rest, resdq, resy, resz, db, dw, dd, dq,dt, dow, dy, dz,section, segment, data, bss, text , equ</string>
+    <string name="supported_keywords_label">Supported Keywords</string>
+    <string untranslatable ="true" name="sys_exit_label">sys_exit (1) - Exiting</string>
+    <string untranslatable ="true" name="sys_write_label">sys_write (4) - Printing Strings</string>
+    <string name="supported_int_label">Supported Interrupts</string>
+    <string name="exit_label">Exit</string>
+    <string name="check_label">Check</string>
+    <string name="task_label">Task</string>
+    <string name="incorrect_task_answer">Not correct. Try Again!</string>
+    <string name="lesson_task_label">Your Task</string>
+    <string name="ERR_0">"Expected end of file or line at "</string>
+    <string name="program_exiting_label">Program exiting.</string>
+    <string name="ERR_1">" is not a recognized instruction."</string>
+    <string name="ERR_3">"Program ended with return code "</string>
+    <string name="executing_label">"Executing "</string>
+    <string name="ERR_4">No executable lines present.</string>
+    <string name="program_return_statement">"Program ended with return code "</string>
+    <string name="ERR_5">No executable lines present.</string>
+    <string name="ERR_6">Program received signal SIGSEGV, Segmentation fault.</string>
+    <string name="ERR_7">"Invalid operand count at "</string>
+    <string name="ERR_8">only 32 bit and 64 bit floats are supported.</string>
+    <string name="ERR_9">"Expected end of line at "</string>
+    <string name="ERR_10">"Invalid operand combination at "</string>
+    <string name="launch_exercise">Launch Exercise</string>
+    <string name="file">File</string>
+    <string name="step">Step</string>
+    <string name="execute">Execute</string>
+    <string name="execute_program">Execute Program</string>
+    <string name="exit_exercise">Exit Exercise</string>
+    <string name="check_exercise">Check Exercise</string>
+    <string name="view_task">View Task</string>
+    <string name="fact_0">x86 Assembly originated from the Intel 8086 processor.</string>
+    <string name="fact_1">x86 also has another component called x87 which handles floating point operations.</string>
+    <string name="fact_2">MOV is used to move values to and from registers and memory.</string>
+    <string name="fact_3">The stack is a special area of memory that can be used to pass function parameters.</string>
+    <string name="fact_4">The BSS segment is used for uninintialized data.</string>
+    <string name="fact_5">The DATA segment is used for initialized data. Using it makes the program bigger.</string>
+    <string name="fact_6">The XOR instruction performs an XOR operation on two values and stores it into the first operand.</string>
+    <string name="save_program_label">Save Program</string>
+    <string name="save_choice_drive_local_label">Save to Google Drive or local storage?</string>
+    <string name="local_storage_label">Local Storage</string>
+    <string name="new_program_label">New Program</string>
+    <string name="new_program_question">This will erase the editor, are you sure?</string>
+    <string name="file_error_unable">Unable to get file contents</string>
+    <string name="default_drive_file_label">MyAmazingProgram</string>
+    <string name="err_no_programs">No programs present.</string>
+    <string name="load_program_label">Load Program</string>
+    <string name="err_file_name_taken">File name is taken!</string>
+    <string name="err_file_is_null">Nothing to save!</string>
+    <string name="saving_label">Saving...</string>
+    <string name="overwrite_label">Overwrite?</string>
+    <string name="overwrite_message">You previously loaded this file. Would you like to overwrite?</string>
+    <string name="err_save_failed_noname">Saving failed. Please enter a name.</string>
+    <string name="overwriting_label">Overwriting...</string>
+    <string name="delete_program_label">Delete Program</string>
+    <string name="button_label_stop">Stop</string>
+    <string name="save_program_description">Type in a name for the program and tap \"Save\", otherwise hit \"Cancel\"</string>
+
+
+</resources>

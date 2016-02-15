@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_id": "iassembly-1219",
+    "project_number": "667606482380",
+    "name": "IAssembly"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667606482380:android:05f9be0afd538f1c",
+        "client_id": "android:com.syncedsoftware.iassembly",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.syncedsoftware.iassembly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "667606482380-2fg4cd5gldv7pqje65hpmpebi9n3lhg3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.syncedsoftware.iassembly",
+            "certificate_hash": "8AE7814625A64F44FAB32A8C678203ED962BDC26"
+          }
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-73723813-1"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

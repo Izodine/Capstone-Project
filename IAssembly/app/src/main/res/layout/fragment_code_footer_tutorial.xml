@@ -1,0 +1,85 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:paddingEnd="@dimen/small_padding"
+    android:paddingStart="@dimen/small_padding"
+    android:paddingLeft="@dimen/small_padding"
+    android:paddingRight="@dimen/small_padding">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tutorial_height"
+        android:layout_weight=".5"
+        android:layout_marginBottom="@dimen/bottom_margin_equalizer"
+        android:id="@+id/lesson_button_container"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:layout_weight="1">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/exit_label"
+                android:id="@+id/lesson_exit_button"
+                android:layout_weight="1"
+                android:minHeight="@dimen/tutorial_button_height"
+                android:contentDescription="@string/exit_exercise" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/check_label"
+                android:id="@+id/lesson_check_button"
+                android:layout_weight="1"
+                android:minHeight="@dimen/tutorial_button_height"
+                android:clickable="false"
+                android:contentDescription="@string/check_exercise" />
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tutorial_button_height"
+            android:text="@string/task_label"
+            android:id="@+id/display_task_button"
+            android:minHeight="@dimen/tutorial_button_height"
+            android:layout_weight="1"
+            android:contentDescription="@string/view_task" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:fillViewport="true"
+        android:background="@drawable/black_border"
+        android:layout_gravity="center_horizontal|top"
+        android:scrollbars="vertical"
+        android:layout_weight=".5"
+        android:id="@+id/output_text_scrollView"
+        android:layout_marginBottom="55dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/code_output_textView"
+            android:layout_gravity="center_horizontal|top"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:textColor="@android:color/white"
+            android:longClickable="false" />
+    </ScrollView>
+
+</LinearLayout>

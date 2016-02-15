@@ -1,0 +1,28 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:fillViewport="true"
+        android:background="@drawable/black_border"
+        android:scrollbars="vertical"
+        android:layout_marginBottom="50dp"
+        android:layout_weight="8"
+        android:id="@+id/output_text_scrollView">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/code_output_textView"
+            android:layout_gravity="center_horizontal|top"
+            android:textSize="12sp"
+            android:padding="5dp"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:textColor="@android:color/white" />
+    </ScrollView>
+</FrameLayout>

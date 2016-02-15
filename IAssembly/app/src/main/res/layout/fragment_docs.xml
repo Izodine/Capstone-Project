@@ -1,0 +1,12 @@
+<ListView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/docs_listView"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:divider="@color/windowBackground"
+    android:dividerHeight="10.0sp"
+    android:padding="10dp"
+    android:paddingEnd="10dp"
+    android:paddingStart="10dp">
+
+</ListView>

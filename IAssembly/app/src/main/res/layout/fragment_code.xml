@@ -1,0 +1,95 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/code_fragment"
+    tools:context="com.syncedsoftware.iassembly.MainActivity$PlaceholderFragment"
+    android:background="@color/windowBackground"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:weightSum="100"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:layout_weight="2">
+
+        <Button
+            android:layout_width="128dp"
+            android:layout_height="match_parent"
+            android:text="@string/step"
+            android:id="@+id/step_button"
+            android:layout_weight=".5"
+            android:enabled="true"
+            android:contentDescription="@string/step" />
+
+        <Button
+            android:layout_width="128dp"
+            android:layout_height="match_parent"
+            android:text="@string/execute"
+            android:id="@+id/execute_button"
+            android:layout_weight=".5"
+            android:contentDescription="@string/execute_program" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_weight="88">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/black_border">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/line_numbers_container"
+            android:padding="10dp"
+            android:background="@drawable/black_border">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/line_numbers_textView"
+                android:textColor="@color/colorAccent"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/editor_edittext"
+            android:windowSoftInputMode="adjustPan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorAccent"
+            android:padding="10dp"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:inputType="textNoSuggestions|textMultiLine"
+            android:textSize="18sp"
+            android:gravity="top" />
+    </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/code_footer_container"
+        android:layout_weight="10" />
+
+</LinearLayout>

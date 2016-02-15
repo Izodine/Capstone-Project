@@ -1,0 +1,118 @@
+<Project>
+  <Name>iAssembly</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>java</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>Interpreter</Name>
+        <Access>Public</Access>
+        <Location left="693" top="39" />
+        <Size width="263" height="128" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Map&lt;Long, String&gt; instructions</Member>
+        <Member type="Method">public static boolean interpret()</Member>
+        <Member type="Method">public void loadCommands(StringBuffer lines)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Parser</Name>
+        <Access>Public</Access>
+        <Location left="712" top="227" />
+        <Size width="163" height="94" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public static boolean parse()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Stack</Name>
+        <Access>Public</Access>
+        <Location left="1027" top="10" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Register</Name>
+        <Access>Public</Access>
+        <Location left="79" top="39" />
+        <Size width="163" height="128" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public void write(int value)</Member>
+        <Member type="Method">public int getx()</Member>
+        <Member type="Method">public int rValue()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RegisterManager</Name>
+        <Access>Public</Access>
+        <Location left="337" top="39" />
+        <Size width="323" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private HashMap&lt;String, Register&gt; registers</Member>
+        <Member type="Method">public Register getRegister(String regName)</Member>
+        <Member type="Method">public void writeToRegister(String regName, int value)</Member>
+        <Member type="Method">public int readFromRegister(Register regname)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RegisterNames</Name>
+        <Access>Public</Access>
+        <Location left="409" top="216" />
+        <Size width="163" height="213" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public static final String eax = "eax"</Member>
+        <Member type="Field">public static final String ebx = "ebx"</Member>
+        <Member type="Field">public static final String ecx = "ecx"</Member>
+        <Member type="Field">public static final String edx = "edx"</Member>
+        <Member type="Field">public static final String ebp = "ebp"</Member>
+        <Member type="Field">public static final String esp = "esp"</Member>
+        <Member type="Field">public static final String esi = "esi"</Member>
+        <Member type="Field">public static final String edi = "edi"</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>RegisterSubset</Name>
+        <Access>Public</Access>
+        <Location left="79" top="216" />
+        <Size width="163" height="111" />
+        <Collapsed>False</Collapsed>
+        <Member type="Method">public int geth()</Member>
+        <Member type="Method">public int getl()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="4" second="5">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>492</X>
+          <Y>191</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+      </Relationship>
+      <Relationship type="Dependency" first="6" second="3">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>162</X>
+          <Y>192</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="0" second="1">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>
