@@ -45,14 +45,32 @@
                 android:contentDescription="@string/check_exercise" />
         </LinearLayout>
 
-        <Button
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/tutorial_button_height"
-            android:text="@string/task_label"
-            android:id="@+id/display_task_button"
-            android:minHeight="@dimen/tutorial_button_height"
-            android:layout_weight="1"
-            android:contentDescription="@string/view_task" />
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:layout_weight="1" >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/tutorial_button_height"
+                android:text="@string/task_label"
+                android:id="@+id/display_task_button"
+                android:minHeight="@dimen/tutorial_button_height"
+                android:layout_weight="1"
+                android:contentDescription="@string/view_task" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/tutorial_button_height"
+                android:text="@string/reset_label"
+                android:id="@+id/reset_tutorial_editor_button"
+                android:minHeight="@dimen/tutorial_button_height"
+                android:layout_weight="1"
+                android:contentDescription="@string/view_task" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

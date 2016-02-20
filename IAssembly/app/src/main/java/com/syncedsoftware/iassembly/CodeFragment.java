@@ -1,9 +1,10 @@
 package com.syncedsoftware.iassembly;
 
 /**
- * Created by izodine on 1/26/16.
+ * Created by Anthony M. Santiago on 1/26/16.
  */
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,7 +72,7 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
     private static String[] mKeywordsArray;
     private CodeFooterFragment mFooterFragment;
     private static String[] mInstructionsArray;
-    private static final String TAG = "drive-quickstart";
+    private static final String TAG = "drive";
     private static final int REQUEST_CODE_CREATOR = 2;
     private static final int REQUEST_CODE_RESOLUTION = 3;
     private GoogleApiClient mGoogleApiClient;
@@ -78,9 +80,9 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
     private Handler mHighlightHandler = new Handler();
     private Editable mEditorText;
     private SimulationLink mSimulationLink;
-    private String loadedFile = "";
-    private boolean stepMode;
-
+    private String mLoadedFile = "";
+    private boolean mIsStepMode;
+    private boolean mAwaitingDriveSave = false;
     AnalyticsApplication application;
     Tracker mTracker;
 
@@ -91,13 +93,12 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
         @Override
         public void run() {
             // draw lines
+            String textString = mEditorText.toString();
             mLineNumberTextView.setText("");
             for(int line = 0; line < mHighlightedWidget.getLineCount(); line++){
                 String lineString = mLineNumberTextView.getText().toString();
                 mLineNumberTextView.setText(String.format("%s%d\n", lineString, line + 1));
             }
-
-            String textString = mEditorText.toString();
 
             for(String string: getKeywordsList()) {
                 highlight( mEditorText, textString, string + "|[.]", Color.parseColor(Colors.KEYWORD_COLOR));
@@ -124,6 +125,7 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        authorizeDrive();
         mSimulationLink = ((MainActivity)context);
     }
 
@@ -179,6 +181,15 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
                 startActivity(new Intent(getContext(),SupperedOpsActivity.class));
                 return true;
 
+            case R.id.action_submit_feedback:
+                mTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("Action")
+                        .setAction("View/Submit Feedback")
+                        .build());
+
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://goo.gl/forms/W4MBPehsJI")));
+                return true;
+
             case R.id.action_delete:
                 promptForDelete();
                 return true;
@@ -198,10 +209,10 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
                                         .setCategory("Action")
                                         .setAction("Save Local Storage")
                                         .build());
-                                if (loadedFile.isEmpty()) {
+                                if (mLoadedFile.isEmpty()) {
                                     promptForSave();
                                 } else
-                                    promptForOverwrite(loadedFile);
+                                    promptForOverwrite(mLoadedFile);
                             }
                         })
                         .setNeutralButton("Drive", new DialogInterface.OnClickListener() {
@@ -241,7 +252,7 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
                                         .setAction("New")
                                         .build());
                                 setEditorText("");
-                                loadedFile = "";
+                                mLoadedFile = "";
                             }
                         })
                         .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -263,6 +274,8 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
      * Create a new file and save it to Drive.
      */
     private void saveFileToDrive() {
+        mAwaitingDriveSave = true;
+        if(!authorizeDrive()) return;
         // Start by creating a new contents, and setting a callback.
         final String programToSave = mProgramToSave;
         Drive.DriveApi.newDriveContents(mGoogleApiClient)
@@ -304,8 +317,27 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
                         } catch (IntentSender.SendIntentException e) {
                             Log.i(TAG, "Failed to launch file chooser.");
                         }
+                        mAwaitingDriveSave = false;
                     }
                 });
+    }
+
+    private boolean authorizeDrive() {
+        if(mGoogleApiClient != null && mGoogleApiClient.isConnected()) return true;
+        if (mGoogleApiClient == null) {
+            // Create the API client and bind it to an instance variable.
+            // We use this instance as the callback for connection and connection
+            // failures.
+            // Since no account name is passed, the user is prompted to choose.
+            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        mGoogleApiClient.connect();
+        return false;
     }
 
     private void promptForFileLoad() {
@@ -345,8 +377,8 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
                     public void onClick(DialogInterface dialog, int which) {
                         mSimulationLink.stopSimulation();
                         Bundle args = new Bundle();
-                        loadedFile = fileList.get(which);
-                        args.putString(FILE_NAME_BUNDLE_ENTRY, loadedFile);
+                        mLoadedFile = fileList.get(which);
+                        args.putString(FILE_NAME_BUNDLE_ENTRY, mLoadedFile);
                         getActivity().getSupportLoaderManager().initLoader(1, args, callbacks);
                     }
                 })
@@ -394,6 +426,8 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
                         SaveTask saveTask = new SaveTask(fileName,editable.toString(), false);
                         saveTask.execute(getContext());
                         Toast.makeText(context, R.string.saving_label, Toast.LENGTH_SHORT).show();
+
+                        cursor.close();
 
                     }
                 })
@@ -535,21 +569,6 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
     public void onResume() {
         super.onResume();
         mFooterFragment.setEditorOperationsLink(this);
-        if (mGoogleApiClient == null) {
-            // Create the API client and bind it to an instance variable.
-            // We use this instance as the callback for connection and connection
-            // failures.
-            // Since no account name is passed, the user is prompted to choose.
-            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                    .addApi(Drive.API)
-                    .addScope(Drive.SCOPE_FILE)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .build();
-        }
-        // Connect the client. Once connected, the camera is launched.
-        mGoogleApiClient.connect();
-
     }
 
     @Override
@@ -570,7 +589,7 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
         executeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!stepMode)
+                if (!mIsStepMode)
                     mSimulationLink.startSimulation(getLines(), Simulation.EXECUTE_MODE, new Handler());
                 else
                     mSimulationLink.stopSimulation();
@@ -582,8 +601,8 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
         stepButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!stepMode) {
-                    stepMode = true;
+                if (!mIsStepMode) {
+                    mIsStepMode = true;
                     executeButton.setText(R.string.button_label_stop);
                     mSimulationLink.startSimulation(getLines(), Simulation.STEP_MODE, new Handler());
                 } else {
@@ -597,7 +616,7 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
 
         mHighlightedWidget.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View view, MotionEvent motionEvent) {
-                mLineNumberTextView.scrollTo(view.getScrollX(), view.getScrollY());
+                mLineNumberTextView.scrollTo(0, view.getScrollY());
                 return false;
             }
         });
@@ -621,6 +640,8 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
                 mHighlightHandler.postDelayed(mHighlightRunnable, HIGHLIGHT_DELAY_MILLIS);
             }
         });
+
+        mHighlightedWidget.setHorizontallyScrolling(true);
 
         return rootView;
     }
@@ -670,9 +691,19 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
         getActivity()
                 .getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.code_footer_container, footerFragment)
+                .replace(R.id.code_footer_container, footerFragment, "FOOTER_FRAGMENT")
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public void closeTutorialMode() {
+        CodeFooterFragment footer = ((CodeFooterFragment) getActivity()
+                .getSupportFragmentManager()
+                .findFragmentByTag("FOOTER_FRAGMENT"));
+
+        if(footer != null)
+            footer.closeTutorialMode();
     }
 
     @Override
@@ -687,8 +718,8 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
 
     @Override
     public void notifyStepIsOver() {
-        stepMode = false;
-        ((Button)getView().findViewById(R.id.execute_button)).setText("Execute");
+        mIsStepMode = false;
+        ((Button)getView().findViewById(R.id.execute_button)).setText(R.string.execute);
     }
 
 
@@ -701,7 +732,7 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
+    public void onConnectionFailed(final ConnectionResult result) {
         // Called whenever the API client fails to connect.
         Log.i(TAG, "GoogleApiClient connection failed: " + result.toString());
         if (!result.hasResolution()) {
@@ -709,25 +740,44 @@ public class CodeFragment extends Fragment implements TutorialLink, CodeEditorOp
             GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), result.getErrorCode(), 0).show();
             return;
         }
-        // The failure has a resolution. Resolve it.
-        // Called typically when the app is not yet authorized, and an
-        // authorization
-        // dialog is displayed to the user.
-        try {
-            result.startResolutionForResult(getActivity(), REQUEST_CODE_RESOLUTION);
-        } catch (IntentSender.SendIntentException e) {
-            Log.e(TAG, "Exception while starting resolution activity", e);
-        }
+        promptForDriveAuth(result);
+
+    }
+
+    private void promptForDriveAuth(final ConnectionResult result) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Drive Connect Failed")
+                .setMessage("Would you like to try again?")
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            result.startResolutionForResult(getActivity(), REQUEST_CODE_RESOLUTION);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.e(TAG, "Exception while starting resolution activity", e);
+                        }
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        //Log.i(TAG, "API client connected.");
+        Log.i(TAG, "GoogleApiClient onconnected");
+        if(mAwaitingDriveSave){
+            saveFileToDrive();
+        }
     }
 
     @Override
     public void onConnectionSuspended(int cause) {
-        //Log.i(TAG, "GoogleApiClient connection suspended");
+        Log.i(TAG, "GoogleApiClient connection suspended");
     }
 
 

@@ -5,24 +5,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
-
 import com.syncedsoftware.iassembly.iasm_base.Simulation;
 import com.syncedsoftware.iassembly.iasm_base.memory.Memory;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Created by izodine on 2/4/16.
+ * Created by Anthony M. Santiago on 2/4/16.
  */
 public class MemoryFragment extends Fragment implements Memory.MemoryListener, Simulation.SimulationReadyListener {
 
@@ -66,7 +62,7 @@ public class MemoryFragment extends Fragment implements Memory.MemoryListener, S
 
     @Override
     public void onMemoryChanged(byte[] compressedMemory) {
-        Log.v(getClass().getSimpleName(), Arrays.toString(compressedMemory));
+        //Log.v(getClass().getSimpleName(), Arrays.toString(compressedMemory));
 
         mAdapter.clear();
         mAdapter.add(getActivity().getString(R.string.memory_address_label));
@@ -82,11 +78,11 @@ public class MemoryFragment extends Fragment implements Memory.MemoryListener, S
     public void onMemoryCompressed(Memory memory) {
         byte[] compressedMemory = memory.getCompressedMemory();
 
-        Log.v(getClass().getSimpleName(), Arrays.toString(compressedMemory));
+        //Log.v(getClass().getSimpleName(), Arrays.toString(compressedMemory));
 
         mAdapter.clear();
-        mAdapter.add("Address");
-        mAdapter.add("Value");
+        mAdapter.add(getActivity().getString(R.string.memory_address_label));
+        mAdapter.add(getActivity().getString(R.string.memory_value_label));
 
         for(int i = 0; i < compressedMemory.length; i++){
             mAdapter.add(Integer.toString(i));
@@ -96,6 +92,6 @@ public class MemoryFragment extends Fragment implements Memory.MemoryListener, S
 
     @Override
     public void onSimulationReady(Simulation simulation) {
-        simulation.Interpreter.InternalMemory.addListener(new Handler(), this);
+        simulation.InternalInterpreter.InternalMemory.addListener(new Handler(), this);
     }
 }

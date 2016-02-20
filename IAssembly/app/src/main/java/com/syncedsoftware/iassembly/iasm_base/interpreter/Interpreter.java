@@ -1,20 +1,17 @@
 package com.syncedsoftware.iassembly.iasm_base.interpreter;
 
 import android.content.Context;
-import android.os.Handler;
-import android.util.Log;
-
+import android.support.annotation.NonNull;
 import com.syncedsoftware.iassembly.R;
-import com.syncedsoftware.iassembly.iasm_base.Simulation;
 import com.syncedsoftware.iassembly.iasm_base.instructions.InstructionSet;
 import com.syncedsoftware.iassembly.iasm_base.memory.Memory;
 import com.syncedsoftware.iassembly.iasm_base.registers.Register;
 import com.syncedsoftware.iassembly.iasm_base.registers.RegisterManager;
+import com.syncedsoftware.iassembly.iasm_base.utils.IASMUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public final class Interpreter {
 
@@ -32,7 +29,7 @@ public final class Interpreter {
      */
     public final RegisterManager InternalRegisterManager = new RegisterManager();
 
-	private List<Simulation.SimulationListener> _callbacks;
+	private List<InterpreterListener> _callbacks = new ArrayList<>();
 
     /**
      * Monitor for wait/notify operations
@@ -44,11 +41,11 @@ public final class Interpreter {
      */
     private final List<String> _awaitingSymbolTable = new ArrayList<>();
 
+    private boolean failedExecution = false;
 	private String _mode = Mode.IDLE;
     private boolean sysExitInterrupt = false;
 	private int _lineNumber = 0;
 	private List<String> _statements = new ArrayList<>();
-	private Handler _handler;
     private Context context;
 
 	private void processInstruction(String[] parts){
@@ -66,7 +63,7 @@ public final class Interpreter {
 
             case OperandOrder.REGISTER_IMMEDIATE:
                 InstructionSet.resolveInstruction(InternalRegisterManager.getRegister(parts[1]),
-                        radixParse(parts[2]), parts);
+                        IASMUtils.radix16Parse(parts[2]), parts);
                 break;
 
             case OperandOrder.REGISTER_MEMORY:
@@ -74,7 +71,7 @@ public final class Interpreter {
                 Memory.Symbol symbol = InternalMemory.getSymbol(parts[2]);
                 if(parts[2].contains("[") || symbol.isEqu){
                     if(symbol.isEqu && parts[2].contains("[")){
-                        postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_6));
+                        callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_6));
                         return;
                     }
                     InstructionSet.resolveInstruction(InternalRegisterManager.getRegister(parts[1]),
@@ -102,11 +99,12 @@ public final class Interpreter {
 
 	}
 
-    private Integer radixParse(String operand) {
-        operand = operand.toUpperCase();
-        if(operand.contains("H")) return Integer.parseInt(operand.replace("H",""), 16);
-        if(operand.contains("0X")) return Integer.parseInt(operand.replace("X",""), 16);
-        return Integer.parseInt(operand);
+    @NonNull
+    private String getString(int msgNum) {
+        if(context == null){
+            return "Context not loaded. Unable to retrieve message from Strings resource.";
+        }
+        return getString(msgNum);
     }
 
     private int resolveOperandOrder(String[] parts){
@@ -132,7 +130,7 @@ public final class Interpreter {
             // Reg, reg
             if(op2IsRegister) return OperandOrder.REGISTER_REGISTER;
             // reg, immed
-            if(isNumeric(op2)) return OperandOrder.REGISTER_IMMEDIATE;
+            if(IASMUtils.isNumeric(op2)) return OperandOrder.REGISTER_IMMEDIATE;
             // red, mem
             if(op2isMemoryLabel) return OperandOrder.REGISTER_MEMORY;
 
@@ -141,7 +139,7 @@ public final class Interpreter {
         if(op1isMemoryLabel){
 
             if(op2IsRegister) return OperandOrder.MEMORY_REGISTER;
-            if(isNumeric(op2)) return OperandOrder.MEMORY_IMMEDIATE;
+            if(IASMUtils.isNumeric(op2)) return OperandOrder.MEMORY_IMMEDIATE;
 
         }
 
@@ -149,32 +147,28 @@ public final class Interpreter {
 
 	}
 
-	private boolean isNumeric(String operand) {
-        operand = operand.toUpperCase();
-        if(operand.contains("0X")){
-            return operand.matches("0[xX][0-9a-fA-F]+");
-        }
-        if(operand.contains("H")){
-            return operand.matches("\\d+[h|H]+");
-        }
-		return operand.matches("\\d+");
-
-	}
-
-	public void interpret(){
+    /**
+     *
+     * @return False if there was an error interpreting. This typically happens if the input lines
+     * List is empty.
+     */
+    public boolean interpret(){
 
         InternalMemory.compress();
-		postToUiThread(CALLBACKS_ONSTARTSIMULATION, null);
+		callback(CALLBACKS_ONSTARTSIMULATION, null);
 
         synchronized (lock){
             if (_statements.isEmpty()){
-				postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_5));
-				return;
+				callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_5));
+				return false;
             }
 
             for (String line : _statements) {
                 if(sysExitInterrupt) break;
-                if (executeLine(line)) return;
+                if (executeLine(line)){
+                    failedExecution = true;
+                    return false;
+                }
             }
             String returnRegister;
             if(sysExitInterrupt){
@@ -183,62 +177,63 @@ public final class Interpreter {
             else{
                 returnRegister = "EAX";
             }
-            postToUiThread(CALLBACKS_ONSENDOUTPUT, context.getString(R.string.program_return_statement) + InternalRegisterManager.getRegister(returnRegister).rValue());
-			postToUiThread(CALLBACKS_ONENDSIMULATION, null);
+            callback(CALLBACKS_ONSENDOUTPUT, getString(R.string.program_return_statement) + InternalRegisterManager.getRegister(returnRegister).rValue());
+			callback(CALLBACKS_ONENDSIMULATION, null);
         }
         sysExitInterrupt = false;
-        _statements.clear();
+        return true;
     }
 
     public void sysExitInterrupt(){
         sysExitInterrupt = true;
     }
 
-	public void postToUiThread(final int callbackId, final String msg){
-		_handler.post(new Runnable() {
-            @Override
-            public void run() {
+    public void reportError(final String msg){
+        callback(CALLBACKS_ONSENDERROROUTPUT, msg);
+    }
 
-                switch (callbackId) {
+	private void callback(final int callbackId, final String msg){
 
-                    case CALLBACKS_ONSTARTSIMULATION:
-                        for(Simulation.SimulationListener listener: _callbacks)
-                            listener.onStartSimulation();
-                        break;
+        if(_callbacks.isEmpty()) return;
 
-                    case CALLBACKS_ONSENDOUTPUT:
-                        for(Simulation.SimulationListener listener: _callbacks)
-                             listener.onSendOutput(msg);
-                        break;
+        switch (callbackId) {
 
-                    case CALLBACKS_ONSENDERROROUTPUT:
-                        for(Simulation.SimulationListener listener: _callbacks)
-                            listener.onSendErrorOutput(msg);
-                        break;
+            case CALLBACKS_ONSTARTSIMULATION:
+                for (InterpreterListener listener : _callbacks)
+                    listener.onStartSimulation();
+                break;
 
-                    case CALLBACKS_ONENDSIMULATION:
-                        for(Simulation.SimulationListener listener: _callbacks)
-                            listener.onEndSimulation();
-                        break;
-                }
+            case CALLBACKS_ONSENDOUTPUT:
+                for (InterpreterListener listener : _callbacks)
+                    listener.onSendOutput(msg);
+                break;
 
-            }
-        });
+            case CALLBACKS_ONSENDERROROUTPUT:
+                for (InterpreterListener listener : _callbacks)
+                    listener.onSendErrorOutput(msg);
+                break;
+
+            case CALLBACKS_ONENDSIMULATION:
+                for (InterpreterListener listener : _callbacks)
+                    listener.onEndSimulation();
+                break;
+        }
+
 	}
 
 	public void interpretStep(){
 
         InternalMemory.compress();
-        postToUiThread(CALLBACKS_ONSTARTSIMULATION, null);
+        callback(CALLBACKS_ONSTARTSIMULATION, null);
 
         synchronized (lock){
             if (_statements.isEmpty()){
-                postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_4));
+                callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_4));
                 return;
             }
 
             for (String line : _statements) {
-                postToUiThread(CALLBACKS_ONSENDOUTPUT, context.getString(R.string.executing_label) + line);
+                callback(CALLBACKS_ONSENDOUTPUT, getString(R.string.executing_label) + line);
                 if(sysExitInterrupt) break;
                 if (executeLine(line)) break;
                 try {
@@ -255,8 +250,8 @@ public final class Interpreter {
             else{
                 returnRegister = "EAX";
             }
-            postToUiThread(CALLBACKS_ONSENDOUTPUT, context.getString(R.string.ERR_3) + InternalRegisterManager.getRegister(returnRegister).rValue());
-            postToUiThread(CALLBACKS_ONENDSIMULATION, null);
+            callback(CALLBACKS_ONSENDOUTPUT, getString(R.string.ERR_3) + InternalRegisterManager.getRegister(returnRegister).rValue());
+            callback(CALLBACKS_ONENDSIMULATION, null);
         }
         sysExitInterrupt = false;
         _statements.clear();
@@ -268,11 +263,19 @@ public final class Interpreter {
         }
     }
 
+    public void addCallback(InterpreterListener listener){
+        _callbacks.add(listener);
+    }
+
+    public void removeCallback(InterpreterListener listener){
+        _callbacks.remove(listener);
+    }
+
     private boolean executeLine(String line) {
         String[] parts = line.replaceAll(",", " ").split("\\s+");
 
         if( !InstructionSet.contains(parts[0])){
-            postToUiThread(CALLBACKS_ONSENDERROROUTPUT, parts[0] + context.getString(R.string.ERR_1));
+            callback(CALLBACKS_ONSENDERROROUTPUT, parts[0] + getString(R.string.ERR_1));
             return true;
         }
 
@@ -294,8 +297,8 @@ public final class Interpreter {
 
         default:
 
-            postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_0) + _lineNumber);
-            postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.program_exiting_label));
+            callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_0) + _lineNumber);
+            callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.program_exiting_label));
 
             return true;
         }
@@ -307,14 +310,14 @@ public final class Interpreter {
 	/**
 	 * Loads the given lines into the Interpreter.
 	 * @param lines
-	 * @return Returns false if there was malformed code or was unable to load.
+     * @param context
+	 * @return Returns false if there was malformed code or no executable statements.
 	 */
-	public boolean load(ArrayList<String> lines, List<Simulation.SimulationListener> listeners, Handler handler, Context context) {
+	public boolean load(List<String> lines, Context context) {
         this.context = context;
-		_callbacks = listeners;
-		_handler = handler;
-
         InternalMemory.clear();
+        _statements.clear();
+        _awaitingSymbolTable.clear();
 		_lineNumber = 0;
 		for(String line: lines) {
 			++_lineNumber;
@@ -348,7 +351,8 @@ public final class Interpreter {
 
 
 			if(lineHasErrors(strippedLine, parts)){
-				postToUiThread(CALLBACKS_ONSENDERROROUTPUT, "Line " + _lineNumber + " has errors.");
+				callback(CALLBACKS_ONSENDERROROUTPUT, "Line " + _lineNumber + " has errors.");
+                callback(CALLBACKS_ONSENDERROROUTPUT, strippedLine);
 				return false;
 			}
 
@@ -371,7 +375,7 @@ public final class Interpreter {
 
 				case 2:
 //                    if(currentFunction != null){
-//                        postToUiThread(CALLBACKS_ONSENDERROROUTPUT, "Cannot set global twice! at " + _lineNumber);
+//                        callback(CALLBACKS_ONSENDERROROUTPUT, "Cannot set global twice! at " + _lineNumber);
 //                        return false;
 //                    }
 //                    if(parts[0].trim().toUpperCase().equalsIgnoreCase(InstructionSet.Keywords.global)) {
@@ -386,8 +390,8 @@ public final class Interpreter {
                     parts[2] = parts[2].toUpperCase();
 
                     if(parts[1].contains("[")) {
-                        if (isNumeric(parts[1].replaceAll("[\\[|\\]]", ""))) {
-                            postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_10) + _lineNumber);
+                        if (IASMUtils.isNumeric(parts[1].replaceAll("[\\[|\\]]", ""))) {
+                            callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_10) + _lineNumber);
                             return false;
                         }
 
@@ -395,8 +399,8 @@ public final class Interpreter {
 
                     if(parts[2].contains("[")){
 
-                        if (isNumeric(parts[2].replaceAll("[\\[|\\]]", ""))) {
-                            postToUiThread(CALLBACKS_ONSENDERROROUTPUT,context.getString(R.string.ERR_10) + _lineNumber);
+                        if (IASMUtils.isNumeric(parts[2].replaceAll("[\\[|\\]]", ""))) {
+                            callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_10) + _lineNumber);
                             return false;
                         }
                     }
@@ -404,12 +408,12 @@ public final class Interpreter {
                     if(! Register.isRegister(parts[1])){
 
                         if(InstructionSet.containsKeyword(parts[1]) || InstructionSet.contains(parts[1])){
-                            postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_10) + _lineNumber);
+                            callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_10) + _lineNumber);
                             return false;
                         }
                         if(! parts[1].contains("[")){
                             if( !parts[1].contains("]")) {
-                                postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_10) + _lineNumber);
+                                callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_10) + _lineNumber);
                                 return false;
                             }
                         }
@@ -422,14 +426,14 @@ public final class Interpreter {
                     if(Register.isRegister(parts[1]) && Register.isRegister(parts[2])) {
                         if (parts[1].contains("E")) {
                             if (!parts[2].contains("E")) {
-                                postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_10) + _lineNumber);
+                                callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_10) + _lineNumber);
                                 return false;
                             }
                         }
                         // ^^
                         if (parts[2].contains("E")) {
                             if (!parts[1].contains("E")) {
-                                postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_10) + _lineNumber);
+                                callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_10) + _lineNumber);
                                 return false;
                             }
                         }
@@ -437,7 +441,7 @@ public final class Interpreter {
 					break;
 
 				default:
-                    postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_9) + _lineNumber);
+                    callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_9) + _lineNumber);
                     return false;
 				}
 
@@ -462,7 +466,7 @@ public final class Interpreter {
                     }
 
                     if(InternalMemory.writeData(parts[1], parts[2], parts[0])){
-                        postToUiThread(CALLBACKS_ONSENDERROROUTPUT, parts[0] + " is already defined.");
+                        callback(CALLBACKS_ONSENDERROROUTPUT, parts[0] + " is already defined.");
                     }
                 }
                 else {
@@ -476,13 +480,10 @@ public final class Interpreter {
 
                     // Reserved cases for future use
 				case 1:
-					//Log.v("Izodine","Mnemonic = " + parts[0]);
-					break;
+					return false;
 
 				case 2:
-					// System.out.print("Mnemonic = " + parts[0]);
-                    // Log.v("Izodine"," Source reg = " + parts[1]);
-					break;
+					return false;
 
 				case 3:
 
@@ -490,7 +491,7 @@ public final class Interpreter {
                         _awaitingSymbolTable.remove(_awaitingSymbolTable.indexOf(parts[0]));
 
                     if (InternalMemory.writeBss(parts[1], Integer.parseInt(parts[2]), parts[0])){
-                         postToUiThread(CALLBACKS_ONSENDERROROUTPUT, parts[0] + " is already defined.");
+                         callback(CALLBACKS_ONSENDERROROUTPUT, parts[0] + " is already defined.");
                      }
 					break;
 
@@ -501,7 +502,8 @@ public final class Interpreter {
 
 			}
 
-		};
+		}
+        if(_statements.isEmpty()) return false;
         //this.functionTable = functionBuilder.build();
 		return true;
 	}
@@ -519,9 +521,7 @@ public final class Interpreter {
     }
 
     private void addAwaitingSymbol(String name){
-
         _awaitingSymbolTable.add(name);
-
     }
 
 	private boolean lineHasErrors(String strippedLine, String[] parts) {
@@ -538,7 +538,7 @@ public final class Interpreter {
 //
         if(InstructionSet.contains(parts[0])){
             if(parts.length < (InstructionSet.operandCount(parts[0]) + 1) ){
-               postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_7) + _lineNumber);
+               callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_7) + _lineNumber);
                 return true;
             }
         }
@@ -546,7 +546,7 @@ public final class Interpreter {
 		if(parts.length > 2 && parts[2].contains(".")){
 			if(!parts[1].equalsIgnoreCase(InstructionSet.Keywords.dd )
 					&& !parts[1].equalsIgnoreCase(InstructionSet.Keywords.dq)){
-                postToUiThread(CALLBACKS_ONSENDERROROUTPUT, context.getString(R.string.ERR_8));
+                callback(CALLBACKS_ONSENDERROROUTPUT, getString(R.string.ERR_8));
 				return true;
 			}
 		}
@@ -582,7 +582,15 @@ public final class Interpreter {
         }
     }
 
-	private final class Mode {
+    public boolean fail() {
+        return failedExecution;
+    }
+
+    public void sendOutput(String msg) {
+        callback(CALLBACKS_ONSENDOUTPUT, msg);
+    }
+
+    private final class Mode {
 
 		private Mode(){};
 
@@ -662,6 +670,30 @@ public final class Interpreter {
 //        }
 //
 //    }
+
+    public interface InterpreterListener {
+
+        /**
+         * Called when the simulation starts
+         */
+        void onStartSimulation();
+
+        /**
+         * Called when the state of the simulation changes.
+         * @param msg A string to display to the user
+         */
+        void onSendOutput(final String msg);
+
+        /**
+         *  Called when there is an error.
+         */
+        void onSendErrorOutput(final String msg);
+
+        /**
+         * Called when the simulation ends.
+         */
+        void onEndSimulation();
+    }
 
 	public static final class OperandOrder{
 

@@ -9,6 +9,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_submit_feedback"
+        android:orderInCategory="100"
+        android:title="@string/feedback_label"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
         android:id="@+id/action_supported_ops"
         android:orderInCategory="100"
         android:title="@string/action_supported_ops"

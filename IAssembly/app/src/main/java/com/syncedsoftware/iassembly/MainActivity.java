@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.syncedsoftware.iassembly.iasm_base.Simulation;
+import com.syncedsoftware.iassembly.iasm_base.interpreter.Interpreter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -98,8 +99,13 @@ public class MainActivity extends ActionBarActivity implements SimulationLink {
     }
 
     public void initTutorial(int tutorialId){
+        closeTutorialMode();
         changePage(0);
         mTutorialLink.setTutorial(tutorialId);
+    }
+
+    public void closeTutorialMode(){
+        mTutorialLink.closeTutorialMode();
     }
 
 //    public void initFreeMode(){
@@ -139,12 +145,12 @@ public class MainActivity extends ActionBarActivity implements SimulationLink {
     }
 
     @Override
-    public void addSimulationListener(Simulation.SimulationListener listener) {
+    public void addSimulationListener(Interpreter.InterpreterListener listener) {
         mSimulationTaskFragment.addSimulationListener(listener);
     }
 
     @Override
-    public void removeSimulationListener(Simulation.SimulationListener listener) {
+    public void removeSimulationListener(Interpreter.InterpreterListener listener) {
         mSimulationTaskFragment.removeSimulationListener(listener);
     }
 
@@ -171,6 +177,11 @@ public class MainActivity extends ActionBarActivity implements SimulationLink {
     @Override
     public void stepSimulation() {
         mSimulationTaskFragment.stepSimulation();
+    }
+
+    @Override
+    public boolean fail() {
+        return mSimulationTaskFragment.fail();
     }
 
 //    public void stopSimulation(){

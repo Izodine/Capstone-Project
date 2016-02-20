@@ -1,7 +1,7 @@
 package com.syncedsoftware.iassembly;
 
 /**
- * Created by izodine on 1/26/16.
+ * Created by Anthony M. Santiago on 1/26/16.
  */
 
 import android.content.Intent;
@@ -31,8 +31,9 @@ public class DocsFragment extends Fragment{
         final View rootView = inflater.inflate(R.layout.fragment_docs, container, false);
 
         ArrayList<String> list = new ArrayList<>();
-        list.add(getString(R.string.docs_title_lessonOne));
-        list.add(getString(R.string.docs_title_lessonTwo));
+        list.add(getString(R.string.docs_title_lesson_0));
+        list.add(getString(R.string.docs_title_lesson_1));
+        list.add(getString(R.string.docs_title_lesson_2));
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),R.layout.doc_view_item, R.id.doc_title_textView, list);
 
         ListView listView =((ListView)rootView.findViewById(R.id.docs_listView));

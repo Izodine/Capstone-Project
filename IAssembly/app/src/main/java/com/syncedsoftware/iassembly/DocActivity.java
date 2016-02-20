@@ -1,27 +1,31 @@
 package com.syncedsoftware.iassembly;
 
 import android.content.Intent;
-import android.os.Build;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.Button;
-import android.widget.ScrollView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.syncedsoftware.iassembly.R;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class DocActivity extends AppCompatActivity {
 
     public static final int GET_TUTORIAL_LINK = 0;
     public static final String EXTRAS_TUTORIAL_ID = "TUTORIAL_ID";
+    @Bind(R.id.web_view_progressBar) ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_doc);
+
+        ButterKnife.bind(this);
+
+        mProgressBar.setVisibility(View.VISIBLE);
 
         Intent extras = getIntent();
 
@@ -33,13 +37,18 @@ public class DocActivity extends AppCompatActivity {
         switch(lessonId){
 
             case 0:
-                title = getText(R.string.docs_title_lessonOne);
-                content = getString(R.string.docs_content_lessonOne);
+                title = getText(R.string.docs_title_lesson_0);
+                content = getString(R.string.docs_content_lesson_0);
                 break;
 
             case 1:
-                title = getText(R.string.docs_title_lessonTwo);
-                content = getString(R.string.docs_content_lessonTwo);
+                title = getText(R.string.docs_title_lesson_1);
+                content = getString(R.string.docs_content_lesson_1);
+                break;
+
+            case 2:
+                title = getText(R.string.docs_title_lesson_2);
+                content = getString(R.string.docs_content_lesson_2);
                 break;
 
             default:
@@ -49,7 +58,10 @@ public class DocActivity extends AppCompatActivity {
         }
 
         ((TextView)findViewById(R.id.doc_detail_title_textView)).setText(title);
-        ((TextView)findViewById(R.id.doc_detail_content_textView)).setText(content);
+        WebView webView = ((WebView)findViewById(R.id.doc_detail_content_textView));
+        webView.setBackgroundColor(Color.TRANSPARENT);
+        webView.loadData(content, "text/html", "utf-8");
+        mProgressBar.setVisibility(View.GONE);
 
         findViewById(R.id.launch_exercise_button).setOnClickListener(new View.OnClickListener() {
             @Override

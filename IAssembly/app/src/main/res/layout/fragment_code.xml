@@ -21,24 +21,25 @@
         android:weightSum="1"
         android:layout_gravity="center"
         android:gravity="center_horizontal"
-        android:layout_weight="2">
+        style="?android:attr/buttonBarStyle">
 
         <Button
             android:layout_width="128dp"
             android:layout_height="match_parent"
             android:text="@string/step"
             android:id="@+id/step_button"
-            android:layout_weight=".5"
             android:enabled="true"
-            android:contentDescription="@string/step" />
+            android:contentDescription="@string/step"
+            android:layout_weight=".5"
+            />
 
         <Button
             android:layout_width="128dp"
             android:layout_height="match_parent"
             android:text="@string/execute"
             android:id="@+id/execute_button"
-            android:layout_weight=".5"
-            android:contentDescription="@string/execute_program" />
+            android:contentDescription="@string/execute_program"
+            android:layout_weight=".5" />
 
     </LinearLayout>
 
@@ -67,7 +68,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:id="@+id/line_numbers_textView"
                 android:textColor="@color/colorAccent"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
         </LinearLayout>
 
         <EditText
@@ -81,8 +82,9 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:inputType="textNoSuggestions|textMultiLine"
-            android:textSize="18sp"
-            android:gravity="top" />
+            android:textSize="15sp"
+            android:gravity="top"
+            android:typeface="monospace" />
     </LinearLayout>
     </ScrollView>
 

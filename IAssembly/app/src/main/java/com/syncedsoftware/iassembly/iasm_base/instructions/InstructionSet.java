@@ -161,9 +161,9 @@ public final class InstructionSet {
 					case 1:
 						byte[] bytes = interpreter.InternalMemory.getRawBytes(ptr, len);
 						if (len > interpreter.InternalMemory.getCompressedMemorySize()) {
-							interpreter.postToUiThread(Interpreter.CALLBACKS_ONSENDERROROUTPUT, "Segmentation Fault.");
+							interpreter.reportError("Segmentation Fault.");
 						} else {
-							interpreter.postToUiThread(Interpreter.CALLBACKS_ONSENDOUTPUT, new String(bytes));
+							interpreter.sendOutput(new String(bytes));
 						}
 						break;
 

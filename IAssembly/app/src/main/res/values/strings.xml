@@ -12,43 +12,120 @@
 
     <!-- DOCS -->
 
-    <string name="docs_title_lessonOne">Intro To Programming</string>
-    <string name="docs_content_lessonOne">A program is nothing more than a bunch of instructions
+    <string name="docs_title_lesson_0">Intro To iAssembly &amp; Programming</string>
+    <string name="docs_title_lesson_1">Intro To Programming II</string>
+    <string name="docs_title_lesson_2">The Nope Instruction</string>
+
+    <string name="docs_content_lesson_0">
+        <![CDATA[
+        <body style="text-align:justify;background-color:#424242;color:#A9B7C6;">
+        </br>
+        </br>
+        <center><h3><b>What is iAssembly?</b></h3></center>
+        </br>
+        In short, iAssembly is an x86 simulator using NASM (Netwide Assembler) as a basis for syntax.
+        It also has a section that teaches the basics of assembly and programming from a low level
+        perspective. It features an exercise system to help reinforce concepts it teaches. These exercises can be accessed
+        by clicking the \"Launch Exercise\" button at the bottom of the screen in a lesson screen such as this one.
+        The end of the lesson will give a little background on what the exercise will be about. If you
+        support iAssembly, please, review the app on Google Play, and fill out a survey for us.
+        The survey is available in the options menu on the Code Editor screen. Any kind of feedback positive
+        or negative is useful.
+        </br>
+        </br>
+        <center><h3><b>Why would I want to learn assembly as an introduction to programming?</b></h3></center>
+        </br>
+        Learning how things work at the very root make it much easier to learn higher level languages
+        such as C, C++ and Java. Modern computer science curriculums teach programming from the top
+        down. It is typically a lot more difficult to go from the top down than vice versa. Something
+        that takes just a couple of lines in code in C++ can be 20 lines in assembly. Assembly is as close to the computer
+        one can get without programming in straight numbers. If you know even the basics of assembly,
+        you have a deeper understanding of how a computer works at it\'s core and are in a position
+        to make better software. Knowing how certain operations work can enable you to create more
+        efficient software. You do not need to be an advanced assembly programmer to succeed, however.
+        With that out of the way, let\'s dive right into it.
+        </br>
+        </br>
+        <center><h3><b>What is a program?</b></h3></center>
+        </br>
+        A program is nothing more than a bunch of instructions
         bundled up for the computer to execute. Imagine such instructions as a recipe to bake a delicious cake.
         If the instructions successfully produce a cake, then it is not a lie. You as the programmer write these
         instructions to produce a certain output or result. In this analogy, it means the desired cake of utmost
-        deliciousness.You may be familiar with Microsoft Word or Firefox. The creators of these programs wrote a
-        lot of instructions to make the programs work and otherwise function how you have seen them operate.
+        deliciousness. You may be familiar with Microsoft Word or Firefox. The creators of these programs wrote a
+        <i>lot</i> of instructions to make the programs work and otherwise function how you have seen them operate.
         Programming is simply writing these instructions. A developer writes in what is called a programming language.
         Just like how we communicate with different countries that have different languages such as English and Spanish,
-        a developer “speaks” to a computer using a programming language. The developer writes out instructions for the
-        computer to follow and execute.</string>
+        a developer \“speaks\” to a computer using a programming language. The developer writes out instructions for the
+        computer to follow and execute.
+        </br>
+        <center><h3><b>A quick grammar lesson</b></h3></center>
+        </br>
+        When you write a sentence, you typically write it using a logical and predefined structure. For
+        example, a sentence is defined as having a subject and a verb. A sentence without those components
+        is not considered a sentence. The same holds true for programming languages. A programming language
+        has a set of pre-defined structures that must be utilized or the program won\'t work correctly. For assembly,
+        this means putting the instructions and whatever it is you are manipulating in the right place.
+        It doesn\'t make sense to say \"1 + = 2\". This \"grammar\" for programming is known as <i>syntax.</i>
+        A full line of syntactically correct executable code is known as a statement. The syntax for
+        many assembly statements follows this structure:
+        </br>
+        <center>&lt;Instruction&gt; &lt;Operand&gt; &lt;Operand&gt;</center>
+        </br>
+        <center>Example Instruction:</center>
+        <center>mov eax,eax</center>
+        </br>
+        An instruction doesn\'t always manipulate data. There are instructions that use the following syntax:
+        <center>&lt;Instruction&gt;</center>
+        <center><h3><b>Some Terminology</b></b></h3></center>
+        </br>
+        It helps to know what some things are called. Here are some basic terms to get you rolling.
+        </br>
+        <ol>
+        <li style="margin-top:3px;"><b>Statement</b> - A statement is a line of executable code in assembly. This is also know as an
+        executable statement. An executable statement starts with an instruction.
+        <li style="margin-top:3px;"><b>Instruction</b> - An instruction is a command for the computer to do something. Ex. Add.
+        <li style="margin-top:3px;"><b>Operand</b> - An operand is a value or component passed to an instruction. For example, if you
+        want to add two numbers, you need two numbers to add. The number in this case are the operands.
+        <li style="margin-top:3px;"><b>Variable</b> - A variable is a location to store data. Think of this as a box. You stuff anything
+        you want to save for later into the box.
+        </ol>
+        </br>
+        The exercise for this lesson shows a simple assembly
+        program. It does nothing but call an exit routine. Take a minute to study the structure
+        of the program.
+        </body>
+        ]]>
+    </string>
 
-    <string name="docs_title_lessonTwo">What is Assembly?</string>
-    <string name="docs_content_lessonTwo">
+    <string name="docs_content_lesson_1">
+        <![CDATA[
+        <body style="text-align:justify;background-color:#424242;color:#A9B7C6;">
         To understand what assembly is, we first need to understand what a processor is.
         The processor, commonly referred to as a Central Processing Unit (CPU), is a piece of hardware that executes
         simple instructions that tell the computer to do something. These instructions consist of adding, subtracting,
         multiplying numbers and much more. These simple instructions are combined to create complex programs.
-        \n\n
-        <b>Now Process This!</b>
-        \n\n
+        </br>
+        </br>
+        <center><b>Now Process This!</b></center>
+        </br>
         The processor contains a list of instructions that do such operations. These are known as Operation Codes; or, \‘opcodes\’
         for short. The only thing a processor understands are numbers - so because of this, each instruction is represented
         by a number. Back before assembly, developers had to write programs with numbers. One could imagine that writing
-        even small programs using just numbers would suck pretty bad. This is almost the equivalent of seeing a cake recipe
-        that looks like this:
-        \n
-        <i>1. 0010 0001 0111</i>
-        \n
-        <i>2. 0001 1111 1100</i>
-        \n
+        even small programs using just numbers would be pretty tedious. Imagine trying to draw blood from a stone.
+        This is almost the equivalent of seeing a cake recipe that looks like this:
+        </br>
+        <center><i>1. 0010 0001 0111</i></center>
+        </br>
+        <center><i>2. 0001 1111 1100</i></center>
+        </br>
         To remedy this, a smart group of people came up with the idea of a mnemonic. A mnemonic is a human readable form
         of a corresponding instruction. We will revisit this particular topic soon after exploring what these numbers
         are and how they work.
-        \n\n
-        <b>Assembly is…</b>
-        \n\n
+        </br>
+        </br>
+        <center><b>Assembly is what?</b></center>
+        </br>
         To get back to the original question - if we put all these pieces together, we can formulate an answer.
         We know that assembly is not the instructions themselves, nor is it something very high level like the
         Java programming language.  Assembly is a layer that sits on top of the underlying opcodes and the CPU.
@@ -61,21 +138,189 @@
         know a programming language, or you are using this as an intro to programming, it will help to understand
         how the low level operations of a computer work. These principles can help create more efficient software
         and design. And besides, assembly code looks pretty cool!
+        </br>
+        </br>
+        <center><b>Binary</b></center>
+        </br>
+        There is a catch, however, in how these numbers fed to the processor are represented. We don\'t
+        send straight numbers like \"6\" to the processor - we send what is called a <i>Binary Number</i>.
+        A Binary Number is a string of 1\’s and 0\’s that represent a number. Everything in a computer
+        is represented as binary numbers. The theory behind it revolves around how the circuits and
+        volts in a computer work. Simply put, binary patterns were and are a lot more practical for
+        means or storing or sending information within a computer system. How does binary work? That
+        is a fantastic question! You are familiar with the decimal system, ex. 1,2,3,4,5,6,7,8,9,10.
+        The decimal system is said to be in base 10. In simple terms, a base is the number of numbers
+        needed before adding a number to the left. Notice how we count 9, and then 10. We flip the
+        \“ones\” place to 0, and then add 1 to the left to create the number ten. In binary, it is
+        in base 2. This means that it only takes 2 numbers to shift a number to the left. This leads
+        to the various \“1s\” and \“0s\” in the pattern. We count to ten in binary like so:
+        </br>
+        <center>0001, 0010, 0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010</center>
+        </br>
+        In contrast to decimal going from the right as \“ones\”, \“tens\”, \“hundreds\”, \“thousands\”,
+        binary goes \“1\”, \“2\”, \“4\”, \“8\”, \“16\”, \“32\” and so on.  Note that each number in
+        a binary number is known as a <i>binary digit</i>, or, <i>bit</i> for short.
+
+        Here it is visually:
+
+        </br>
+
+        <center>
+        <style type="text/css">
+        .tg  {border-collapse:collapse;border-spacing:0;}
+        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+        .tg .tg-s6z2{text-align:center}
+        .tg .tg-yw4l{vertical-align:top}
+        </style>
+        <table class="tg">
+          <tr>
+            <th class="tg-s6z2">1</th>
+            <th class="tg-yw4l">0</th>
+          </tr>
+          <tr>
+            <td class="tg-yw4l">ten<br></td>
+            <td class="tg-yw4l">one</td>
+          </tr>
+        </table>
+        </center>
+
+        </br>
+
+        <center>Ten in Decimal (2 decimal places)
+        </br>
+        Ten plus zero equals ten.</center>
+        </br>
+
+        <center><style type="text/css">
+        .tg  {border-collapse:collapse;border-spacing:0;}
+        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+        .tg .tg-s6z2{text-align:center}
+        .tg .tg-yw4l{vertical-align:top}
+        </style>
+        <table class="tg">
+          <tr>
+            <th class="tg-s6z2">1</th>
+            <th class="tg-yw4l">0</th>
+            <th class="tg-yw4l">1</th>
+            <th class="tg-yw4l">0</th>
+          </tr>
+          <tr>
+            <td class="tg-yw4l">eight<br></td>
+            <td class="tg-yw4l">four</td>
+            <td class="tg-yw4l">two</td>
+            <td class="tg-yw4l">one</td>
+          </tr>
+        </table>
+        </center>
+
+        </br>
+
+        <center>Ten in Binary(4 bits)
+        </br>
+        Eight plus two equals ten.</center>
+        </br>
+        Decimal multiplies by 10, whereas binary multiplies by 2.
+        Make sense? This conveniently rolls us into the aforementioned topic earlier.
+        </br>
+        </br>
+        <center><b>Mnemonics</b></center>
+        </br>
+        As stated earlier a mnemonic is a human readable form of an instruction. We know now that
+        instructions are actually just numbers. A mnemonic is a convenient and more elegant way to
+        write an instruction. A common instruction used in assembly is the mov instruction. This
+        stands for \“move\”. As the name suggests, it moves something from one place to the other.
+        When we write mov the computer doesn\'t actually see mov. It sees what numbers mov is a mask
+        for. For the sake of example, let\'s say that mov is actually mapped to the number 3. When
+        we send our bits to the processor <i>(0011 in this case)</i>, the processor knows it is being
+        commanded to move something from one place to the other. The \“to\” and \“from\” are called
+        operands. We briefly went over those in Lesson 1.
+                </br>
+        </br>
+        <center><b>Registers</b></center>
+        </br>
+        Now that we know somewhat how a CPU works on a high level, we can learn about how it stores
+        data. A CPU has physical locations in it in which it can store some data. These locations
+        are called registers. Because these locations are quite literally attached to the CPU,
+        operations performed on them are extremely fast. By extremely fast, this is not an exaggeration.
+        A CPU can process millions of instructions a second, so I wouldn\'t recommend trying to add
+        several numbers in a row faster than a processor can. You will lose.
+        </br>
+        </br>
+        <center><b>Main and secondary memory</b></center>
+        </br>
+        A computer also possess its own way to store data. Where else would you put your emulated
+        <i>Atari</i> game collection? Data that is stored in files on a hard drive is referred to as s
+        econdary memory. Main memory is referring to RAM(random access memory). RAM is a temporary
+        storage location that programs and other temporary data are loaded into. When your operating
+        system loads up, it is actually being loaded right into ram. The same goes for an assembly
+        program. The computer allocates enough RAM to hold the program, then it gracefully loads all
+        the instructions into it accordingly and starts executing away.
+        </br>
+        </br>
+        <center><b>Data types</b></center>
+        </br>
+        We know that a binary number is made up of bits. What about other groups of binary?
+        A number that is made up of 8 bits (sometimes called an octet) is known as a byte. 1024
+        bytes is a kilobyte. 1024 kilobytes is a megabyte. 1024 megabytes is a gigabyte. 1024
+        gigabytes is a terabyte. There are a ton more, including a yottabyte! We won\'t discuss them
+        here though, you get the idea.
+        </br>
+        </br>
+        <center><b>Recap</b></center>
+        </br>
+        Here is a quick recap. We know so far, that assembly is a layer on top of the CPU and it\'s
+        underlying operation codes. Assembly contains several mnemonics that map to a certain
+        instruction (which is actually just a number), and an instruction is something sent to the
+        CPU that tells it to perform a certain action. We also know that main memory is RAM
+        (a temporary storage area that programs are loaded into) and what secondary memory is
+        (a place to store more permanent data, like files and cake recipes).
+        </br>
+        Enough theory for the moment. In this exercise, we will take a look
+        at the classic \"Hello, World!\" program, and how it is implemented in assembly. Do not worry
+        if you do not understand how it works. We will revisit it a couple lessons from now after we
+        delve deeper into assembly.
+
+
+        </body>
+        ]]>
+        </string>
+
+    <string name="docs_content_lesson_2">
+        <![CDATA[
+        <body style="text-align:justify;background-color:#424242;color:#A9B7C6;">
+        Whoops, did I label this instruction \"nope\" by mistake? I meant to label it <i>nop</i>. Note to self,
+        in a future update, fix this failure of a lesson title.
+        </br>
+        </br>
+        <center><b>The NOP Instruction</b></center>
+        </br>
+        The NOP instruction is the most complex instruction you will ever learn. It performs the following
+        operation: . This is correct. It does nothing. Well, it does do something behind
+        the scenes, but nothing notable at this stage of learning. NOP stands for \"no operation\".
+        NOP is used in a couple of different ways. One of these ways is the concept of <i>alignment</i>.
+        We will get into alignment in a later lesson. In the upcoming exercise, you will write an assembly
+        program to utilize the NOP instruction. We know what <i>nop</i> does, now how is it used?
+        Simple! This particular instruction does not take any operands, which means it\'s syntax is as
+        such:
+        </br>
+        <center>&ltInstruction&gt</center>
+        </br>
+        Given that syntax, it looks like this:
+        <center>nop</center>
+        </br>
+        Make sense? Give it a try!
+        </body>
+        ]]>
         </string>
 
     <string name="lesson_exercise_text_0">In this lesson we explored the basic concepts of programming. I don\'t
     expect you to be able to program right now. For this task I want you to get acquainted with the editor.
     Press the \"Execute\" button to run the program. Notice that the bottom right of the screen displays
     the output of the program. Press the \"Step\" button to execute the program one line at a time. Press \"Check\"
-    to check your work for correctness. Finally, press \"Exit\" to exit Tutorial mode.</string>
-
-    <string untranslatable ="true" name="lesson_exercise_precode_0">
-        section .text ; Define text section\n
-        mov eax,1     ; sys_exit\n
-        mov ebx,0     ; Return value\n
-        int 80h       ; Call kernel\n
-    </string>
-
+    to check your work for correctness. Pressing \"Task\" will open this dialog. Finally, press \"Exit\"
+    to exit Tutorial mode.</string>
 
     <string name="lesson_exercise_text_1">Press \'Execute\' to run the program. Press \'Check\' afterwards. Here
      is a program that actually does something. One of the first things you do in any programming language at
@@ -87,6 +332,27 @@
     series of bytes. There is another section for declaring data, but we will go over that later. That
     other section is known as the BSS section. As a quick recap, a byte is a collection of 8 bits. This
     means that for each byte we have 256 values to play with!</string>
+
+    <string name="lesson_exercise_text_2">In this lesson we learned about NOP. NOP means
+     no operation. The bad news is that your program will appear to not do anything at all. However,
+    the good news is that this will officially be your first written assembly program! A word of warning,
+    do not remove the line that says \"section .data\". The program will not work if this is removed!
+    We will review what a section is in the next lesson. \"xor eax,eax\" is less important, but try
+    not to remove it. If you accidentally delete something, press the \"Reset\" button to bring back
+    the starting code.</string>
+
+    <string name="lesson_hint_text_2">
+
+    </string>
+
+
+    <string untranslatable ="true" name="lesson_exercise_precode_0">
+        section .text ; Define text section\n
+        mov eax,1     ; sys_exit\n
+        mov ebx,0     ; Return value\n
+        int 80h       ; Call kernel\n
+    </string>
+
     <string untranslatable ="true" name="lesson_exercise_precode_1">
         section .data\n
         msg: db \"Hello, World!\",0xa\n
@@ -106,14 +372,13 @@
     </string>
 
     <string untranslatable ="true" name="lesson_exercise_precode_2">
-        section .data\n
-        \n;Write your code here!
+        section .text\n
         \n
-        xor eax,eax
+        xor eax,eax\n
+        ;Write your code in line 2!\n
     </string>
 
     <string name="lesson_exercise_text_notfound">Lesson text not found.</string>
-
     <string name="lesson_success">Congratulations!</string>
     <string name="success_dialog_question">You completed this lesson! Would you like to exit the Tutorial editor now?</string>
     <string name="memory_address_label">Address</string>
@@ -180,6 +445,13 @@
     <string name="delete_program_label">Delete Program</string>
     <string name="button_label_stop">Stop</string>
     <string name="save_program_description">Type in a name for the program and tap \"Save\", otherwise hit \"Cancel\"</string>
+    <string name="reset_label">Reset</string>
+    <string name="reset_code_label">Code Reset</string>
+    <string name="reset_code_message">This will reset your current code. Are you sure?</string>
+    <string name="simulation_started">Simulation Started.</string>
+    <string name="simulation_ended">Simulation Ended</string>
+    <string name="feedback_label">Feedback</string>
+    <string name="legal_label">Legal</string>
 
 
 </resources>

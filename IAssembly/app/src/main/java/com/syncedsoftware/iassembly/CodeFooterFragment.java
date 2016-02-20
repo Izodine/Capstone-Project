@@ -5,12 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +20,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.syncedsoftware.iassembly.iasm_base.Simulation;
+import com.syncedsoftware.iassembly.iasm_base.interpreter.Interpreter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class CodeFooterFragment extends Fragment implements Simulation.SimulationListener{
+public class CodeFooterFragment extends Fragment implements Interpreter.InterpreterListener {
 
     public static final String BUNDLE_TUTORIAL_MODE = "TUTORIAL_MODE";
     public static final String BUNDLE_TUTORIAL_ID   = "TUTORIAL_ID";
@@ -36,10 +36,10 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
     @Bind(R.id.code_output_textView) TextView mOutputTextView;
     @Bind(R.id.output_text_scrollView) ScrollView mOutputScroll;
 
-    Button mTutorialExitButton;
-    Button mTutorialCheckButton;
-    Button mDisplayTaskButton;
-
+    private Button mTutorialExitButton;
+    private Button mTutorialCheckButton;
+    private Button mDisplayTaskButton;
+    private Button mResetEditorButton;
     private LinearLayout mLessonButtonContainer;
     private SimulationLink mSimulationLink;
     private CodeEditorOperations mCodeEditorLink;
@@ -103,16 +103,25 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
                 }
             });
 
+            mResetEditorButton = (Button)rootView.findViewById(R.id.reset_tutorial_editor_button);
+
+            mResetEditorButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    drawResetConfirmDialog();
+                }
+            });
+
             mCodeEditorLink.setEditorText(getPrecode());
 
             mTutorialCheckButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(checkWork()){
+                    if (checkWork()) {
                         drawSuccessDialog();
-                    }
-                    else{
-                        Toast.makeText(getContext(), R.string.incorrect_task_answer, Toast.LENGTH_SHORT).show();
+                    } else {
+                        //drawUnsuccessDialog();
+                        Toast.makeText(getContext(), "Try Again!", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -125,28 +134,65 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
                     closeTutorialMode();
                 }
             });
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    drawTaskDialog();
+                }
+            }, 550);
+
         }
 
         return rootView;
     }
 
+//    private void drawUnsuccessDialog() {
+//        Activity activity = getActivity();
+//        new AlertDialog.Builder(activity)
+//                .setTitle("Whoops! That is not correct!")
+//                .setMessage(getHintText())
+//                .setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                    }
+//                })
+//                .setIcon(android.R.drawable.ic_dialog_info)
+//                .show();
+//    }
+
+//    private String getHintText() {
+//
+//    }
+
     private String getPrecode() {
+        StringBuilder builder = new StringBuilder();
+        String[] lines;
         switch(getArguments().getInt(CodeFooterFragment.BUNDLE_TUTORIAL_ID, -1)){
 
             case 0:
-                return getString(R.string.lesson_exercise_precode_0);
+                lines = getString(R.string.lesson_exercise_precode_0).split("\n");
+                break;
 
             case 1:
-                return getString(R.string.lesson_exercise_precode_1);
+                lines = getString(R.string.lesson_exercise_precode_1).split("\n");
+                break;
 
             case 2:
-                return getString(R.string.lesson_exercise_precode_2);
+                lines = getString(R.string.lesson_exercise_precode_2).split("\n");
+                break;
+
+            default:
+                return getString(R.string.lesson_exercise_text_notfound);
 
         }
-        return getString(R.string.lesson_exercise_text_notfound);
+        for(String line: lines){
+            builder.append(line.trim()).append("\n");
+        }
+        return builder.toString();
     }
 
-    private void closeTutorialMode() {
+    public void closeTutorialMode() {
         mSimulationLink.removeSimulationListener(this);
         getActivity().getSupportFragmentManager().popBackStack();
     }
@@ -155,7 +201,7 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
         Activity activity = getActivity();
         new AlertDialog.Builder(activity)
                 .setTitle(activity.getString(R.string.lesson_task_label))
-                .setMessage(getLessonText())
+                .setMessage(getTaskText())
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -184,6 +230,25 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
                 .show();
     }
 
+    private void drawResetConfirmDialog() {
+        Activity activity = getActivity();
+        new AlertDialog.Builder(activity)
+                .setTitle(activity.getString(R.string.reset_code_label))
+                .setMessage(activity.getString(R.string.reset_code_message))
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                mCodeEditorLink.setEditorText(getPrecode());
+                            }
+                        })
+                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_delete)
+                        .show();
+    }
+
     private boolean checkWork() {
 
         switch(getArguments().getInt(CodeFooterFragment.BUNDLE_TUTORIAL_ID, -1)){
@@ -194,14 +259,15 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
                 return true;
 
             case 2:
-                return mCodeEditorLink.getEditorText().toString().toUpperCase().contains("ADD");
+                return mCodeEditorLink.getEditorText().toString().toUpperCase().contains("NOP")
+                        && !mSimulationLink.fail();
 
         }
 
         return false;
     }
 
-    private String getLessonText() {
+    private String getTaskText() {
 
         switch(getArguments().getInt(CodeFooterFragment.BUNDLE_TUTORIAL_ID, -1)){
 
@@ -210,6 +276,9 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
 
             case 1:
                 return getString(R.string.lesson_exercise_text_1);
+
+            case 2:
+                return getString(R.string.lesson_exercise_text_2);
 
         }
         return getString(R.string.lesson_exercise_text_notfound);
@@ -263,7 +332,7 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
     @Override
     public void onStartSimulation() {
         clearOutput();
-        print("Simulation Started.");
+        print(getContext().getString(R.string.simulation_started));
     }
 
 
@@ -279,7 +348,7 @@ public class CodeFooterFragment extends Fragment implements Simulation.Simulatio
 
     @Override
     public void onEndSimulation() {
-        print("Simualtion Ended");
+        print(getContext().getString(R.string.simulation_ended));
         mCodeEditorLink.notifyStepIsOver();
     }
 }

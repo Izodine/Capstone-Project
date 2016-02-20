@@ -21,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Created by izodine on 1/28/16.
+ * Created by Anthony M. Santiago on 1/28/16.
  */
 public class RegistersFragment extends Fragment implements Register.RegisterListener,
         Simulation.SimulationReadyListener {
@@ -86,9 +86,9 @@ public class RegistersFragment extends Fragment implements Register.RegisterList
 
     @Override
     public void onSimulationReady(Simulation simulation) {
-        simulation.Interpreter.InternalRegisterManager.addListenerToAll(this, new Handler());
+        simulation.InternalInterpreter.InternalRegisterManager.addListenerToAll(this, new Handler());
         HashMap<String, Register> registers =
-                (HashMap<String, Register>) simulation.Interpreter.InternalRegisterManager.getAllRegisters();
+                (HashMap<String, Register>) simulation.InternalInterpreter.InternalRegisterManager.getAllRegisters();
 
         for(Map.Entry<String, Register> reg: registers.entrySet()){
             reg.getValue().write(0);

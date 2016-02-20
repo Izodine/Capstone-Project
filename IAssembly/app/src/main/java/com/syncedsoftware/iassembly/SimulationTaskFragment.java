@@ -7,20 +7,21 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 
 import com.syncedsoftware.iassembly.iasm_base.Simulation;
+import com.syncedsoftware.iassembly.iasm_base.interpreter.Interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by izodine on 1/28/16.
+ * Created by Anthony M. Santiago on 1/28/16.
  */
 public class SimulationTaskFragment extends Fragment {
 
     private Simulation mSimulationThread;
     private List<Simulation.SimulationReadyListener> readyListeners = new ArrayList<>();
-    private List<Simulation.SimulationListener> simulationListeners = new ArrayList<>();
+    private List<Interpreter.InterpreterListener> interpreterListeners = new ArrayList<>();
 
-    //private Simulation.SimulationListener mCallbacks;
+    //private Simulation.InterpreterListener mCallbacks;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -31,21 +32,21 @@ public class SimulationTaskFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        //mCallbacks = (Simulation.SimulationListener)activity;
+        //mCallbacks = (Simulation.InterpreterListener)activity;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //if(context instanceof MainActivity){ mCallbacks = (Simulation.SimulationListener)context; }
+        //if(context instanceof MainActivity){ mCallbacks = (Simulation.InterpreterListener)context; }
     }
 
-    public void addSimulationListener(Simulation.SimulationListener listener){
-        simulationListeners.add(listener);
+    public void addSimulationListener(Interpreter.InterpreterListener listener){
+        interpreterListeners.add(listener);
     }
 
-    public void removeSimulationListener(Simulation.SimulationListener listener){
-        simulationListeners.remove(listener);
+    public void removeSimulationListener(Interpreter.InterpreterListener listener){
+        interpreterListeners.remove(listener);
     }
 
     public void addReadyListener(Simulation.SimulationReadyListener listener){
@@ -57,7 +58,7 @@ public class SimulationTaskFragment extends Fragment {
     }
 
     public void startSimulation(ArrayList<String> lines, int mode, Handler handler){
-        mSimulationThread = new Simulation(mode, simulationListeners, handler);
+        mSimulationThread = new Simulation(mode, interpreterListeners, handler);
 
         for(Simulation.SimulationReadyListener listener: readyListeners){
             listener.onSimulationReady(mSimulationThread);
@@ -66,6 +67,15 @@ public class SimulationTaskFragment extends Fragment {
         if(mSimulationThread.load(lines, getContext()))
             mSimulationThread.start();
 
+    }
+
+    /**
+     * Returns weather the simulation failed or not. If the Simulation thread is null,
+     * then it returns true.
+     * @return True if the simulation failed, false otherwise.
+     */
+    public boolean fail() {
+        return mSimulationThread == null || mSimulationThread.InternalInterpreter.fail();
     }
 
 

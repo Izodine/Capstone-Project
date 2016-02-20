@@ -25,27 +25,43 @@
         android:textColor="@color/colorAccent"
         android:layout_weight="1" />
 
-    <ScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="false"
-        android:background="@color/windowBackground"
-        android:layout_weight="98"
-        android:id="@+id/doc_view_scrolLView">
+        android:layout_height="wrap_content"
+        android:layout_weight="98">
 
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/web_view_progressBar"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:visibility="visible"/>
 
-        <TextView
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/doc_detail_content_textView"
-            android:gravity="start"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="16sp"
-            android:padding="10dp"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp" />
-    </ScrollView>
+            android:fillViewport="false"
+            android:background="@color/windowBackground"
+            android:id="@+id/doc_view_scrolLView">
+
+
+            <WebView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/doc_detail_content_textView"
+                android:gravity="start"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:paddingEnd="10dp"
+                android:paddingStart="10dp" />
+        </ScrollView>
+
+    </FrameLayout>
 
     <Button
         android:layout_width="match_parent"

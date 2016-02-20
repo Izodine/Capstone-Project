@@ -35,7 +35,7 @@ public final class Pair<E, F> {
 			return false;
 		}
 		Pair<?, ?> sourcePair = (Pair<?, ?>) obj;
-	    return Objects.equals(sourcePair.first(), elementOne) && Objects.equals(sourcePair.second(), elementTwo);
+	    return sourcePair.first().equals(elementOne) && sourcePair.second().equals(elementTwo);
 	}
 
 }

@@ -1,7 +1,10 @@
 package com.syncedsoftware.iassembly;
 
 import android.os.Handler;
+
 import com.syncedsoftware.iassembly.iasm_base.Simulation;
+import com.syncedsoftware.iassembly.iasm_base.interpreter.Interpreter;
+
 import java.util.ArrayList;
 
 /**
@@ -9,12 +12,13 @@ import java.util.ArrayList;
  */
 public interface SimulationLink {
 
-    void addSimulationListener(Simulation.SimulationListener listener);
-    void removeSimulationListener(Simulation.SimulationListener listener);
+    void addSimulationListener(Interpreter.InterpreterListener listener);
+    void removeSimulationListener(Interpreter.InterpreterListener listener);
     void addSimulationReadyListener(Simulation.SimulationReadyListener listener);
     void removeSimulationReadyListener(Simulation.SimulationReadyListener listener);
     void startSimulation(ArrayList<String> lines, int mode, Handler handler);
     void stopSimulation();
     void stepSimulation();
+    boolean fail();
 
 }
