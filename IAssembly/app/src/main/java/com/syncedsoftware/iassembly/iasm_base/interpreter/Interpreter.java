@@ -104,7 +104,7 @@ public final class Interpreter {
         if(context == null){
             return "Context not loaded. Unable to retrieve message from Strings resource.";
         }
-        return getString(msgNum);
+        return context.getString(msgNum);
     }
 
     private int resolveOperandOrder(String[] parts){
