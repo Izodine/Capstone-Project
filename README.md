@@ -23,3 +23,7 @@ iAssembly is an x86 Simulator using NASM syntax as a basis. It currently support
 # What will be added in the future?
 
 *Functions, the stack, ESP, EIP, PUSH, POP, REGISTER to MEMORY operand support, and IMMEDIATE to MEMORY operand support.
+
+# Building and running the app
+
+All of the application's dependencies are handled by Gradle. The only thing that should have to be done to get it up and working is importing it into Android Studio and building the project.
